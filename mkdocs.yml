@@ -2,17 +2,17 @@
 
 # Project Information
 
-site_name: cento
-site_description: Combines markdown files into publications and related materials
-site_url: https://WithPrecedent.github.io/cento
-repo_name: WithPrecedent/cento
-repo_url: https://github.com/WithPrecedent/cento
+site_name: coursebook
+site_description: Turns markdown files into coursebooks, slides, and teaching notes
+site_url: https://WithPrecedent.github.io/coursebook
+repo_name: WithPrecedent/coursebook
+repo_url: https://github.com/WithPrecedent/coursebook
 watch: [
   mkdocs.yml,
   README.md,
   CONTRIBUTING.md,
   CHANGELOG.md,
-  src/cento]
+  src/coursebook]
 copyright: Copyright, 2026 Corey Rayburn Yung
 docs_dir: docs
 
@@ -22,7 +22,6 @@ nav:
 - Home:
   - Overview: index.md
   - Changelog: changelog.md
-  - Credits: credits.md
   - License: license.md
 - User Guide:
   - Tutorial: tutorial.md
@@ -32,7 +31,7 @@ nav:
 - Development:
   - Contributing: contributing.md
   - Code of Conduct: code_of_conduct.md
-  # - Coverage Report: coverage.md
+  - Coverage Report: coverage.md
 
 # Documentation Appearance
 
@@ -94,8 +93,8 @@ markdown_extensions:
 - md_in_html
 - pymdownx.details
 - pymdownx.emoji:
-    emoji_index: !!python/name:materialx.emoji.twemoji
-    emoji_generator: !!python/name:materialx.emoji.to_svg
+    emoji_index: !!python/name:material.extensions.emoji.twemoji
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg
 - pymdownx.highlight:
     anchor_linenums: true
     line_spans: __span
@@ -121,9 +120,9 @@ markdown_extensions:
 
 plugins:
 - autorefs
-# - coverage:
-#     page_name: coverage
-#     html_report_dir: htmlcov
+# Adds the HTML report in "htmlcov" (from `pytest --cov --cov-report=html`) as
+# the "coverage" page.
+- coverage
 - gen-files:
     scripts:
     - docs/scripts/gen_ref_nav.py
@@ -135,12 +134,11 @@ plugins:
 - mkdocstrings:
     handlers:
       python:
-        import:
-        - https://docs.python.org/3/objects.inv
         options:
           docstring_section_style: table
+          # Leaves out private and dunder members (names that start with "_").
           filters:
-            - "!^__"
+            - "!^_"
           heading_level: 1
           # members_order: alphabetical
           merge_init_into_class: true
@@ -154,4 +152,4 @@ extra:
   - icon: fontawesome/brands/github
     link: https://github.com/WithPrecedent
   - icon: fontawesome/brands/python
-    link: https://pypi.org/project/cento/
+    link: https://pypi.org/project/coursebook/

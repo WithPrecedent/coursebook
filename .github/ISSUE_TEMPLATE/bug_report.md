@@ -29,8 +29,8 @@ If applicable, add screenshots to help explain your problem.
 
 **System (please complete the following information):**
 
-- `cento` version: [e.g. 0.2.1]
-- Python version: [e.g. 3.9]
+- `coursebook` version: [e.g. 0.2.1]
+- Python version: [e.g. 3.12]
 - OS: [Windows/Linux/MacOS]
 
 **Additional context**

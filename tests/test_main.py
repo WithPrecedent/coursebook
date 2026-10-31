@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import coursebook
 
-def test_cento() -> None:
-    return
+
+def test_coursebook() -> None:
+    assert coursebook.__version__ == '0.1.0'
 
 if __name__ == '__main__':
-    test_cento()
+    test_coursebook()

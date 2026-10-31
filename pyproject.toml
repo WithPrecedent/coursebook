@@ -1,104 +1,159 @@
 # Project packaging rules and instructions
 
 [project]
-name = "cento"
-description = "Combines markdown files into publications and related materials"
+name = "coursebook"
+description = "Turns markdown files into coursebooks, slides, and teaching notes"
 authors = [{name = "Corey Rayburn Yung", email = "coreyrayburnyung@gmail.com"}]
-license = {text = "Apache Software License 2.0"}
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
+# The version is set by `__version__` in "src/coursebook/__init__.py".
 dynamic = ["version"]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development"]
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Education",
+    "Topic :: Office/Business :: Office Suites",
+    "Topic :: Text Processing :: Markup :: Markdown"]
 keywords = [
-    "markdown",
-    "convert",
-    "publish",
-    "publication",
     "academic",
-    "word",
-    "pdf",
-    "html"]
+    "coursebook",
+    "markdown",
+    "pandoc",
+    "powerpoint",
+    "publication",
+    "slides",
+    "textbook",
+    "word"]
+# `pypandoc_binary` includes a copy of pandoc so that users do not have to
+# install pandoc separately.
 dependencies = [
-    "codebraid",
-    "panflute",
-    "pypandoc",
-    "python-docx",
-    "python-pptx",
-    "wonka"]
+    "camina >= 0.2.3",
+    "pypandoc_binary >= 1.13",
+    "python-docx >= 1.1",
+    "pyyaml >= 6.0",
+    "wonka >= 0.3.0"]
+
+[project.optional-dependencies]
+# PDF export uses Typst instead of LaTeX.
+pdf = ["typst >= 0.13"]
+
+[project.scripts]
+coursebook = "coursebook.cli:main"
 
 [project.urls]
-Documentation = "https://WithPrecedent.github.io/cento"
-Repository = "https://github.com/WithPrecedent/cento"
-Issues = "https://github.com/WithPrecedent/cento/issues"
-Changelog = "https://WithPrecedent.github.io/cento/changelog"
+Documentation = "https://WithPrecedent.github.io/coursebook"
+Repository = "https://github.com/WithPrecedent/coursebook"
+Homepage = "https://github.com/WithPrecedent/coursebook"
+Issues = "https://github.com/WithPrecedent/coursebook/issues"
+Changelog = "https://WithPrecedent.github.io/coursebook/changelog"
 
+[dependency-groups]
+dev = [
+    "uv",
+    "markdown-callouts",
+    "markdown-exec",
+    "mkdocs",
+    "mkdocs-coverage",
+    "mkdocs-gen-files",
+    "mkdocs-git-committers-plugin-2",
+    "mkdocs-literate-nav",
+    "mkdocs-material",
+    "mkdocs-minify-plugin",
+    "mkdocstrings[python]",
+    "toml",
+    "mypy",
+    "types-pyyaml",
+    "pre-commit",
+    "ruff",
+    {include-group = "tests"}]
+# `python-pptx` is only used by the tests to read the slide decks that
+# `coursebook` creates. `typst` is included so that PDF export is tested.
+tests = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pytest-randomly",
+    "pytest-xdist",
+    "python-pptx",
+    "typst"]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+# Version 1.27 is the first to support SPDX license expressions (PEP 639).
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
 
-[tool.pdm]
-plugins = [
-    "sync-pre-commit-lock[pdm]",
-    "pdm-multirun"]
+[tool.hatch.version]
+path = "src/coursebook/__init__.py"
 
-[tool.pdm.build]
-package-dir = "src"
-editable-backend = "editables"
+[tool.hatch.build.targets.wheel]
+packages = ["src/coursebook"]
 
-[tool.pdm.dev-dependencies]
-docs = [
-    "markdown-callouts >= 0.3",
-    "markdown-exec >= 1.6.0",
-    "mkdocs >= 1.5.2",
-    "mkdocs-coverage >= 1.0.0",
-    "mkdocs-gen-files >= 0.5.0",
-    "mkdocs-git-committers-plugin-2 >= 1.1.2",
-    "mkdocs-literate-nav >= 0.6.0",
-    "mkdocs-material >= 9.1.2",
-    "mkdocs-minify-plugin >= 0.7.1",
-    "mkdocstrings[python] >= 0.22.0",
-    "toml >= 0.10.2"]
-quality = [
-    "pre-commit >= 3.3.3",
-    "ruff >= 0.0.286"]
-tests = [
-    "coverage >= 7.2.7",
-    "pytest >= 7.4.0",
-    "pytest-cov >= 4.1.0",
-    "pytest-randomly >= 3.13.0",
-    "pytest-xdist >= 3.3.1"]
 
-[tool.pdm.version]
-source = "file"
-path = "src/cento/__init__.py"
+[tool.coverage.report]
+skip_empty = true
+show_missing = true
+# Adds to (instead of replacing) the default exclusions, such as
+# "pragma: no cover".
+exclude_also = [
+  "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+tests = ["tests", "*/tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["coursebook", "tests"]
+
+
+
+[tool.mypy]
+files = ['src']
+disallow_untyped_defs = true
+disallow_any_unimported = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+show_error_codes = true
+
+# `pypandoc` does not ship type information.
+[[tool.mypy.overrides]]
+module = ["pypandoc", "pypandoc.*"]
+ignore_missing_imports = true
+
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 addopts = "--showlocals"
 filterwarnings = ["ignore::DeprecationWarning"]
 pythonpath = ["src"]
 
 [tool.ruff]
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 extend-exclude = ["docs", "scripts", "site", "tests", ".*.*"]
 fix = true
-fixable = ["ALL"]
-ignore = [
+line-length = 80
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+lint.fixable = ["ALL"]
+lint.ignore = [
     "A001",  # Variable is shadowing a Python builtin
-    "ANN101",  # Missing type annotation for self
-    "ANN102",  # Missing type annotation for cls
     "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed
     "ARG003",  # Unused class method argument: `parameters`
     "ARG005",  # Unused lambda argument
+    "COM812",  # Recommended disable by Ruff
     "C901",  # Too complex
     "D105",  # Missing docstring in magic method
     "D400",  # First line must end in a period
@@ -111,6 +166,7 @@ ignore = [
     "ERA001",  # Commented out code
     "EXE002",  # No shebang is present in an executable file
     "FBT001",  # Boolean positional arg in function definition
+    "FBT002",  # Boolean default positional arg in function definition
     "G004",  # Logging statement uses f-string
     "PTH123",  # `open()` should be replaced by `Path.open()`
     "PLR0911",  # Too many return statements
@@ -120,16 +176,11 @@ ignore = [
     "PLR1711", # Useless 'return' at the end of function
     "Q000",  # Single quotes found but double quotes preferred
     "RET505",  # Unnecessary `else` after `return` statement
-    "RET506",  # Unnecessary `else` after `raise` statement
     # "S0001",  # Use of assert detected
     "SLF001", # Private member accessed
     "TID252",  # Relative imports are banned
     "TRY003",]  # Avoid specifying long messages outside the exception class
-    # "W0105",  # String statement has no effect
-    # "W0221",  # Arguments differ
-    # "W0222",]  # Access to a protected member
-line-length = 80
-select = [
+lint.select = [
     "A",  # flake8-buttons
     "ANN",  # flake8-annotations
     "ARG",  # flake8-unused-arguments
@@ -173,32 +224,40 @@ select = [
     "T",  #
     "T10",  # flake8-debugger
     "T20",  # flake8-print
-    "TCH",  # flake8-type-checking
     "TID",  # flake8-tidy-imports
     "TRY",  # tryceratops
     "UP",  # pyupgrade
     "W",  # pydocstyle warnings
     "YTT",]  # flake8-2020
-task-tags = ["To Do:"]
+lint.task-tags = ["To Do:"]
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 suppress-none-returning = true
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "double"
 
-[tool.ruff.flake8-type-checking]
+[tool.ruff.lint.flake8-type-checking]
 exempt-modules = ["typing", "typing_extensions"]
 
-[tool.ruff.flake8-unused-arguments]
+[tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 case-sensitive = true
-known-first-party = ["cento"]
 required-imports = ["from __future__ import annotations"]
 split-on-trailing-comma = false
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 ignore-decorators = ["typing.overload"]
+
+[tool.uv]
+package = true
+
+[tool.cruft]
+# Paths that `cruft update` leaves alone because they belong to this project
+# instead of the `snickerdoodle` template.
+skip = ["CHANGELOG.md", "src", "tests", "uv.lock"]

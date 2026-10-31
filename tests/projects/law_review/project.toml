@@ -1,0 +1,19 @@
+# The outline repeats labels ("A" and "B" appear under both II and III), which
+# is why it is a list instead of a table.
+outline = [
+    "I: Introduction",
+    "II: Background",
+    "A: History",
+    "B: Current Law",
+    "III: Argument",
+    "A: Text",
+    "B: Purpose",
+    "IV: Conclusion"]
+
+[project]
+name = "A Modest Proposal for Statutory Interpretation"
+author = ["Corey Rayburn Yung"]
+style = "law review"
+include = ["manuscript", "slides"]
+bibliography = "references.bib"
+output_folder = "output"

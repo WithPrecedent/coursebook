@@ -1,7 +1,5 @@
 # Securely publishes the repository on PyPI
 
-# This code is adapted  from the model Action in the PDM documentation:
-# https://pdm.fming.dev/latest/usage/publish/
 
 # To make this action work, you need to configure PyPI properly, using this
 # guide: https://docs.pypi.org/trusted-publishers/adding-a-publisher/
@@ -24,10 +22,13 @@ jobs:
 
     steps:
     - name: get repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
-    - name: install pdm
-      uses: pdm-project/setup-pdm@v4
+    - name: install uv
+      uses: astral-sh/setup-uv@v10.2.0
+
+    - name: build package
+      run: uv build
 
     - name: push to pypi
-      run: pdm publish
+      run: uv publish
